@@ -18,32 +18,25 @@ In a new terminal:
 
 Bash/sh/zsh:
 ```bash
-export AZURE_RESOURCE_GROUP=rg-dapr-docs-test
-export IDENTITY_RESOURCE_GROUP=rg-my-identities
-export AZURE_STATICWEBSITE_NAME=daprdocs-latest
+export AZURE_RESOURCE_GROUP=docs-website
+export IDENTITY_RESOURCE_GROUP=my-identities
+export AZURE_STATICWEBSITE_NAME=dapr-docs-v1-42
 ```
 
 PowerShell
 ```PowerShell
-setx AZURE_RESOURCE_GROUP "rg-dapr-docs-test"
-setx IDENTITY_RESOURCE_GROUP "rg-my-identities"
-setx AZURE_STATICWEBSITE_NAME "daprdocs-latest"
+setx AZURE_RESOURCE_GROUP "docs-website"
+setx IDENTITY_RESOURCE_GROUP "my-identities"
+setx AZURE_STATICWEBSITE_NAME "dapr-docs-v1-42"
 ```
 
 This assumes you have an existing [user-assigned managed identity](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp) (see L39 in `./infra/main.bicep` to use or modify name) in a resource group that you can reference as the runtime identity of this static web app.  We recommend storing this in a different resource group from your application, to keep the permissions and lifecycles separate of your identity and your web app.  We also recommend narrowly limiting who has access to view, contribute or own this identity, and also only apply it to single resource scopes, not to entire resource groups or subscriptions, to avoid elevation of priviledges.    
 
 2) Deploy using the Azure Dev CLI
 
-The first time, and any updates to this environment
-
+Bash/sh/zsh:
 ```bash
-azd up
-```
-
-For subsequent environments/sites, create a side-by-side environment like this:
-
-```bash
-azd env new
+azd env new $AZURE_STATICWEBSITE_NAME
 azd up
 ```
 
@@ -53,7 +46,7 @@ You will be prompted for the subscription and location (region) to use.  The Res
 
 1) (Optional) Grant correct minimal permissions for inbound publishing and outbound access to dependencies using the Static Web App -> Access control (IAM) blade of the portal
 
-2) (Optional) Map your DNS CNAME using the Static Web App -> Custom Domain blade of the portal
+2) (Optional) Map your DNS CNAME using the Static Web App -> Custom Domain -> Add blade of the portal.  Note: remove any Locks on your resource group or resources.  Also, you must have Edge turned off before attempting. 
 
 ## Configure your CI/CD pipeline
 
